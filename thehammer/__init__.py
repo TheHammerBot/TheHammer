@@ -1,0 +1,1 @@
+from thehammer.core import make_bot

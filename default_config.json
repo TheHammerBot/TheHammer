@@ -1,0 +1,10 @@
+{
+    "mongo": {
+        "url": "mongodb://localhost:27017",
+        "dbname": "thehammer"
+    },
+    "token": "A mystery",
+    "prefix": "h>",
+    "admins": [197322731115642880],
+    "owners": [197322731115642880]
+}
