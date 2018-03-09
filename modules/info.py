@@ -43,7 +43,7 @@ class InfoModule:
         """Get more information about the bot"""
         bot = self.bot
         if not hasattr(bot, "owner"):
-            return await ctx.send("Hey, I'm sorry, but the bot is not ready yet, please try again in a few seconds.")
+            return await ctx.send("Hey, I'm sorry, but I am not ready yet, please try again in a few seconds.") # You won't often have to see this, this is only when the bot hasn't yet started up
         embed = discord.Embed(color=discord.Colour.green())
         discord_version = discord.__version__
         python_version = platform.python_version()
