@@ -1,1 +1,1 @@
-from thehammer.modlog.modlog import ModLog
+from .modlog import ModLog

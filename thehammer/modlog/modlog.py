@@ -10,7 +10,7 @@ class Case:
         self.guild = guild
         self.data = data
     
-    async def get(self, key, default=None):
+    def get(self, key, default=None):
         return self.data.get(key, default)
 
     async def set(self, key, value):
@@ -20,14 +20,16 @@ class Case:
         await self.bot.db.cases.update_one({"case_id":self.get("case_id"), "guild_id":self.get("guild_id")}, {"$set":self.data})
         em = await self.generate_embed()
         try:
-            await self.bot.get_message(self.get("message")).edit(embed=em)
+            message = await self.bot.get_channel(await self.guild.settings.get("modlog_channel", 1)).get_message(self.get("message"))
+            await message.edit(embed=em)
         except:
-            channel = await self.bot.get_channel(self.guild.settings.get("modlog_channel", None))
+            print(await self.guild.settings.get("modlog_channel", 1))
+            channel = await self.bot.get_channel(1)
             if channel:
                 await channel.send(embed=em)
 
     async def generate_embed(self):
-        em = discord.Embed(title="{} | Case: #{}".format(self.get("type", "Invalid Type"), self.get("_id", 1)), color=self.get_case_color(self.get("type")), timestamp=self.get("timestamp", None))
+        em = discord.Embed(title="{} | Case: #{}".format(self.get("type", "Invalid Type"), self.get("case_id", 1)), color=self.get_case_color(self.get("type")), timestamp=self.get("timestamp", None))
         user = await self.bot.get_user_info(self.get("user"))
         moderator = await self.bot.get_user_info(self.get("moderator"))
         em.add_field(name="User", value="{} (<@{}>)".format(str(user), user.id))
@@ -80,11 +82,10 @@ class ModGuild:
             return None
         case['id'] = _id
         del case['_id']
-        del case['case_id']
         return Case(self.bot, self, case)
 
-    async def generate_embed(self, id, _type, moderator, user, reason, timestamp):
-        em = discord.Embed(title="{} | Case: #{}".format(_type, id), color=self.get_case_color(_type), timestamp=timestamp)
+    async def generate_embed(self, _id, _type, moderator, user, reason, timestamp):
+        em = discord.Embed(title="{} | Case: #{}".format(_type, _id), color=self.get_case_color(_type), timestamp=timestamp)
         user = await self.bot.get_user_info(user)
         moderator = await self.bot.get_user_info(moderator)
         em.add_field(name="User", value="{} (<@{}>)".format(str(user), user.id))

@@ -1,12 +1,7 @@
 from discord.ext import commands
 import discord
-import io
-import textwrap
-import traceback
-from contextlib import redirect_stdout
 import asyncio
 from thehammer.decorators import is_owner
-import logging as logger
 
 class AdminModule:
     def __init__(self, bot):

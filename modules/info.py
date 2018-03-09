@@ -2,6 +2,7 @@ from discord.ext import commands
 import discord
 import platform
 import asyncio
+from thehammer.decorators import is_server_admin
 
 class InfoModule:
     def __init__(self, bot):
@@ -37,6 +38,18 @@ class InfoModule:
         embed.add_field(name="Created At", value="{} (Thats over {} days ago)".format(user_created, since_created), inline=True)
         embed.add_field(name="Joined At", value="{} (Thats over {} days ago)".format(joined_at, since_joined), inline=True)
         return await ctx.send(embed=embed)
+
+    @commands.command()
+    @is_server_admin()
+    async def rolelist(self, ctx):
+        buff = ''
+        for role in ctx.guild.roles:
+            role = '{} - {}\n'.format(role.id, role.name)
+            if len(role) + len(buff) > 1990:
+                await ctx.send('```{}```'.format(buff))
+                buff = ''
+            buff += role
+        return await ctx.send('```{}```'.format(buff))
 
     @commands.command(aliases=["info","botinfo"])
     async def about(self, ctx):
