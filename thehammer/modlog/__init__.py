@@ -1,0 +1,1 @@
+from thehammer.modlog.modlog import ModLog

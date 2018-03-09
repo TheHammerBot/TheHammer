@@ -4,12 +4,15 @@ from thehammer.config import config_from_file
 import os
 from thehammer.context import CustomContext
 import motor.motor_asyncio
+from thehammer.modlog import ModLog
 
 class Bot(commands.AutoShardedBot):
-    def __init__(self, config_file):
+    def __init__(self, config_file, logger):
         self.config = config_from_file(config_file)
+        self.logger = logger
         super(Bot, self).__init__(command_prefix=self.config.prefix)
         self.init_databases()
+        self.modlog = ModLog(self)
 
     async def get_context(self, message, *, cls=CustomContext):
         return await super().get_context(message, cls=cls)
@@ -23,13 +26,13 @@ class Bot(commands.AutoShardedBot):
         self.init_mongo()
 
     def load_extension(self, name):
-        print('LOADING EXTENSION {name}'.format(name=name))
+        self.logger.info('LOADING EXTENSION {name}'.format(name=name))
         if not name.startswith("modules."):
             name = "modules.{}".format(name)
         return super().load_extension(name)
 
     def unload_extension(self, name):
-        print('UNLOADING EXTENSION {name}'.format(name=name))
+        self.logger.info('UNLOADING EXTENSION {name}'.format(name=name))
         if not name.startswith("modules."):
             name = "modules.{}".format(name)
         return super().unload_extension(name)
@@ -61,7 +64,7 @@ class Bot(commands.AutoShardedBot):
         finally:
             loop.close()
 
-def make_bot():
+def make_bot(logger):
     config_file = "config.json"
-    bot = Bot(config_file)
+    bot = Bot(config_file, logger)
     return bot

@@ -62,7 +62,7 @@ class InfoModule:
             embed.add_field(name="Shard ID", value=str(ctx.message.guild.shard_id), inline=True)
         embed.add_field(name="Database", value="**MongoDB:** {}".format(mongo_status), inline=True)
         embed.add_field(name="Links", value="**[Guild Invite](soontm)\n"
-                                            "[Bot Invite](soontm)**")
+                                            "[Bot Invite](https://discordapp.com/oauth2/authorize?client_id={}&permissions=8&scope=bot)**".format(self.bot.user.id))
         embed.add_field(name="Developers", value="{}, CircuitRCAY#3038".format(bot.owner.owner))
         return await ctx.send(embed=embed)
 
