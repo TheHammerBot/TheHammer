@@ -8,8 +8,6 @@ class ModModule:
         self.bot = bot
         self.ban_queue = []
         self.kick_queue = []
-        self.mute_queue = []
-        self.unmute_queue = []
 
     @commands.command()
     @is_server_mod()
