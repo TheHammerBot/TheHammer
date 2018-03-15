@@ -1,7 +1,6 @@
 from discord.ext import commands
 import discord
 import platform
-import asyncio
 from thehammer.decorators import is_server_admin
 import datetime
 
@@ -61,14 +60,9 @@ class InfoModule:
         bot = self.bot
         if not hasattr(bot, "owner"):
             return await ctx.send("Hey, I'm sorry, but I am not ready yet, please try again in a few seconds.") # You won't often have to see this, this is only when the bot hasn't yet started up
-        embed = discord.Embed(color=discord.Colour.green())
+        embed = discord.Embed(color=discord.Colour.green(), timestamp=datetime.datetime.utcnow())
         discord_version = discord.__version__
         python_version = platform.python_version()
-        mongo_status = "Available"
-        try:
-            await asyncio.wait_for(asyncio.ensure_future(bot.mongo.admin.command("ismaster"), loop=self.bot.loop), 1, loop=self.bot.loop)
-        except:
-            mongo_status = "Offline"
         embed.add_field(name="Discord.py Version", value=discord_version, inline=True)
         embed.add_field(name="Python Version", value=python_version, inline=True)
         embed.add_field(name="Author", value=bot.owner.owner, inline=True)
@@ -77,10 +71,9 @@ class InfoModule:
         embed.add_field(name="Users", value=str(len(bot.users)), inline=True)
         if ctx.message.guild:
             embed.add_field(name="Shard ID", value=str(ctx.message.guild.shard_id), inline=True)
-        embed.add_field(name="Database", value="**MongoDB:** {}".format(mongo_status), inline=True)
-        embed.add_field(name="Links", value="**[Guild Invite](soontm)\n"
-                                            "[Bot Invite](https://discordapp.com/oauth2/authorize?client_id={}&permissions=8&scope=bot)**".format(self.bot.user.id))
+        embed.add_field(name="Links", value="**[Guild Invite](https://discord.gg/pfvZCpu)\n[Bot Invite](https://discordapp.com/oauth2/authorize?client_id={}&permissions=8&scope=bot)\n[GitHub](https://github.com/JustMaffie/TheHammer)**".format(self.bot.user.id))
         embed.add_field(name="Developers", value="{}, CircuitRCAY#3038".format(bot.owner.owner))
+        embed.set_footer(text='Requested by: {}'.format(ctx.author), icon_url=ctx.author.avatar_url)
         return await ctx.send(embed=embed)
 
 

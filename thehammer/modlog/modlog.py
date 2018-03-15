@@ -63,12 +63,12 @@ class ModGuild:
         self.settings = GuildSettings(bot, self)
 
     async def generate_global_id(self):
-        casecount_doc = await self.bot.db.metadata.find_one({'_id': "case_count"})
+        casecount_doc = await self.bot.db.metadata.find_one({'_id': "global_id"})
         if not casecount_doc:
-            await self.bot.db.metadata.insert_one({"_id": "case_count", "value": 0})
+            await self.bot.db.metadata.insert_one({"_id": "global_id", "value": 0})
             return await self.generate_global_id()
         casecount = casecount_doc['value'] + 1
-        await self.bot.db.metadata.replace_one({'_id': "case_count"},{'value': casecount})
+        await self.bot.db.metadata.replace_one({'_id': "global_id"},{'value': casecount})
         return casecount
 
     async def generate_id(self):
