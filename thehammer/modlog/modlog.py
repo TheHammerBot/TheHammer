@@ -23,18 +23,20 @@ class Case:
             message = await self.bot.get_channel(await self.guild.settings.get("modlog_channel", 1)).get_message(self.get("message"))
             await message.edit(embed=em)
         except:
-            print(await self.guild.settings.get("modlog_channel", 1))
-            channel = await self.bot.get_channel(1)
-            if channel:
-                await channel.send(embed=em)
+            pass # Pass silently
 
     async def generate_embed(self):
         em = discord.Embed(title="{} | Case: #{}".format(self.get("type", "Invalid Type"), self.get("case_id", 1)), color=self.get_case_color(self.get("type")), timestamp=self.get("timestamp", None))
         user = await self.bot.get_user_info(self.get("user"))
-        moderator = await self.bot.get_user_info(self.get("moderator"))
-        em.add_field(name="User", value="{} (<@{}>)".format(str(user), user.id))
-        em.add_field(name="Moderator", value=str(moderator))
-        em.add_field(name="Reason", value=self.get("reason"))
+        try:
+            moderator = await self.bot.get_user_info(self.get("moderator"))
+        except Exception:
+            moderator = None
+        if not moderator:
+            moderator = "Unknown Moderator"
+        em.add_field(name="User", value="{} (<@{}>)".format(str(user), user.id), inline=True)
+        em.add_field(name="Moderator", value=str(moderator), inline=True)
+        em.add_field(name="Reason", value=self.get("reason"), inline=False)
         em.set_footer(text='ID: {}'.format(user.id))
         return em
 
@@ -87,10 +89,15 @@ class ModGuild:
     async def generate_embed(self, _id, _type, moderator, user, reason, timestamp):
         em = discord.Embed(title="{} | Case: #{}".format(_type, _id), color=self.get_case_color(_type), timestamp=timestamp)
         user = await self.bot.get_user_info(user)
-        moderator = await self.bot.get_user_info(moderator)
-        em.add_field(name="User", value="{} (<@{}>)".format(str(user), user.id))
-        em.add_field(name="Moderator", value=str(moderator))
-        em.add_field(name="Reason", value=reason)
+        try:
+            moderator = await self.bot.get_user_info(moderator)
+        except Exception as e:
+            moderator = None
+        if not moderator:
+            moderator = "Unknown Moderator"
+        em.add_field(name="User", value="{} (<@{}>)".format(str(user), user.id), inline=True)
+        em.add_field(name="Moderator", value=str(moderator), inline=True)
+        em.add_field(name="Reason", value=reason, inline=False)
         em.set_footer(text='ID: {}'.format(user.id))
         return em
     
@@ -117,8 +124,12 @@ class ModGuild:
         if not reason:
             reason = "No reason set, set one with [p]reason {} <reason>".format(_id)
         timestamp = datetime.datetime.utcnow()
-        message = await modlog_channel.send(embed=await self.generate_embed(_id, _type, moderator.id, user.id, reason, timestamp))
-        data = {"_id": await self.generate_global_id(), "case_id":_id, "guild_id": self.id, "type": _type, "moderator":moderator.id, "user":user.id, "reason":reason, "message":message.id, "timestamp":timestamp}
+        if not moderator:
+            moderator = "Unknown Moderator"
+        if hasattr(moderator, "id"):
+            moderator = moderator.id
+        message = await modlog_channel.send(embed=await self.generate_embed(_id, _type, moderator, user.id, reason, timestamp))
+        data = {"_id": await self.generate_global_id(), "case_id":_id, "guild_id": self.id, "type": _type, "moderator":moderator, "user":user.id, "reason":reason, "message":message.id, "timestamp":timestamp}
         await self.bot.db.cases.insert_one(data)
         self.bot.logger.info("Created case id {} guild_id {}".format(_id, self.id))
         return Case(self.bot, self, data)

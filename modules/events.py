@@ -33,14 +33,15 @@ class EventsModule:
         elif isinstance(error, commands.CommandNotFound):
             pass
         elif isinstance(error, commands.CheckFailure):
-            await ctx.send(":robot: **Hey, I'm sorry, but I can't let you do that!**")
+            await ctx.send("Hey, I'm sorry, but I can't let you do that!")
         elif isinstance(error, commands.NoPrivateMessage):
-            await ctx.send(":robot: **You can't execute this command in Direct Messages!**")
+            await ctx.send("You can't execute this command in Direct Messages!")
         elif isinstance(error, commands.CommandOnCooldown):
             await ctx.send("This command is on cooldown. "
                            "Try again in {:.2f}s"
                            "".format(error.retry_after))
         else:
             self.bot.logger.exception(error)
+
 def setup(bot):
     bot.add_cog(EventsModule(bot))

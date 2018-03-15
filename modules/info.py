@@ -3,6 +3,7 @@ import discord
 import platform
 import asyncio
 from thehammer.decorators import is_server_admin
+import datetime
 
 class InfoModule:
     def __init__(self, bot):
@@ -20,23 +21,26 @@ class InfoModule:
         _roles = member.roles
         roles = []
         for role in _roles:
-            roles.append(role.name.replace("@here", "[at]here").replace("@everyone", "[at]everyone"))
-        embed = discord.Embed(color=discord.Colour.green())
-        embed.title = "{}#{}".format(user.name, user.discriminator)
+            roles.append(role.name)
+        embed = discord.Embed(color=discord.Colour.green(), timestamp=datetime.datetime.utcnow())
+        author = "{}#{}".format(user.name, user.discriminator)
+        username = user.name
         if user.id in self.bot.config.admins:
-            embed.title += " <:thehammerdev:414012044862423040>"
+            username += " <:thehammerdev:422026806464479242>"
         joined_at = member.joined_at
         since_joined = (ctx.message.created_at - joined_at).days
         since_created = (ctx.message.created_at - user.created_at).days
         user_created = user.created_at.strftime("%d %b %Y %H:%M")
         joined_at = joined_at.strftime("%d %b %Y %H:%M")
+        embed.set_author(name=author, icon_url=member.avatar_url)
         embed.add_field(name="ID", value="{}".format(user.id), inline=True)
-        embed.add_field(name="Username", value="{}".format(user.name), inline=True)
+        embed.add_field(name="Username", value="{}".format(username), inline=True)
         embed.add_field(name="Game", value=member.game, inline=True)
         embed.add_field(name="Roles", value=", ".join(roles))
         embed.add_field(name="Status", value=member.status, inline=True)
         embed.add_field(name="Created At", value="{} (Thats over {} days ago)".format(user_created, since_created), inline=True)
         embed.add_field(name="Joined At", value="{} (Thats over {} days ago)".format(joined_at, since_joined), inline=True)
+        embed.set_footer(text='Requested by: {}'.format(ctx.author), icon_url=ctx.author.avatar_url)
         return await ctx.send(embed=embed)
 
     @commands.command()
@@ -46,10 +50,10 @@ class InfoModule:
         for role in ctx.guild.roles:
             role = '{} - {}\n'.format(role.id, role.name)
             if len(role) + len(buff) > 1990:
-                await ctx.send('```{}```'.format(buff))
+                await ctx.channel.send('```{}```'.format(buff))
                 buff = ''
             buff += role
-        return await ctx.send('```{}```'.format(buff))
+        return await ctx.channel.send('```{}```'.format(buff))
 
     @commands.command(aliases=["info","botinfo"])
     async def about(self, ctx):

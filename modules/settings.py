@@ -18,9 +18,18 @@ class SettingsModule:
     async def modlog(self, ctx, channel:discord.TextChannel=None):
         guild = await self.bot.modlog.get_guild(ctx.guild)
         if not channel:
-            return await ctx.send(":robot: **Modlog Channel is currently <#{}>!**".format(await guild.settings.get("modlog_channel")))
+            return await ctx.send("Modlog Channel is currently <#{}>!".format(await guild.settings.get("modlog_channel")))
         await guild.update_setting("modlog_channel", channel.id)
-        return await ctx.send(":robot: **Modlog Channel updated to <#{}>!**".format(channel.id))
+        return await ctx.send("Modlog Channel updated to <#{}>!".format(channel.id))
+
+    @settings.command()
+    @is_server_admin()
+    async def prefix(self, ctx, prefix):
+        guild = await self.bot.modlog.get_guild(ctx.guild)
+        if not prefix:
+            return await ctx.send("Prefix is currently set to {}!".format(await guild.settings.get("command_prefix", self.bot.config.prefix)))
+        await guild.update_setting("command_prefix", prefix)
+        return await ctx.send("Prefix updated to {}!".format(prefix))
 
     @settings.command()
     @is_server_admin()
@@ -30,22 +39,49 @@ class SettingsModule:
             mutedrole = await guild.settings.get("muted_role")
             role = discord.utils.get(guild.guild.roles, id=mutedrole)
             if not role:
-                return await ctx.send(":robot: **There is no valid muted role set!**")
-            return await ctx.send(":robot: **The muted role is currently set to {}!**".format(role.name))
+                return await ctx.send("There is no valid muted role set!")
+            return await ctx.send("The muted role is currently set to {}!".format(role.name))
         role = discord.utils.get(guild.guild.roles, id=role)
         if not role:
-            return await ctx.send(":robot: **I can't seem to find that role!**")
+            return await ctx.send("I can't seem to find that role!")
         if guild.guild.default_role.id == role.id:
-            return await ctx.send(":robot: **The [at]everyone role cannot be a muted role!**")
-        guild = await self.bot.modlog.get_guild(guild)
+            return await ctx.send("The [at]everyone role cannot be a muted role!")
         muted_role = await guild.settings.get("muted_role", None)
         role = role.id
         if role == muted_role:
-            return await ctx.send(":robot: **That role is already the muted role!**")
-
+            return await ctx.send("That role is already the muted role!")
         await guild.update_setting("muted_role", role)
         await guild.settings.save()
-        return await ctx.send(":robot: **That role is now the muted role!**")
+        return await ctx.send("That role is now the muted role!")
+
+    @settings.command()
+    @is_server_admin()
+    async def createmutedrole(self, ctx):
+        guild = await self.bot.modlog.get_guild(ctx.guild)
+        mutedrole = await guild.settings.get("muted_role")
+        role = discord.utils.get(guild.guild.roles, id=mutedrole)
+        if role:
+            return await ctx.send("There is already a valid muted role set!")
+        role = guild.guild.default_role
+        if not role:
+            # Its unlikely
+            return await ctx.send("Huh?! This guild doesn't have a default role?!")
+        permissions = role.permissions
+        permissions.update(create_instant_invite=False, add_reactions=False, send_messages=False, send_tts_messages=False)
+        role = await guild.guild.create_role(name="Muted", permissions=permissions, colour=discord.Colour.darker_grey(), hoist=False, mentionable=False, reason="Automatic creation of muted role")
+        categories = []
+        textchannels = []
+        for channel in guild.guild.channels:
+            if isinstance(channel, discord.CategoryChannel):
+                categories.append(channel)
+            elif isinstance(channel, discord.TextChannel):
+                textchannels.append(channel)
+        for cat in categories:
+            await cat.set_permissions(role, create_instant_invite=False, add_reactions=False, send_messages=False, send_tts_messages=False)
+        for channel in textchannels:
+            await channel.set_permissions(role, create_instant_invite=False, add_reactions=False, send_messages=False, send_tts_messages=False)
+        await guild.update_setting("muted_role", role.id)
+        return await ctx.send("Created a muted role!")
 
     @commands.group()
     @is_server_admin()
@@ -58,20 +94,20 @@ class SettingsModule:
     async def addrole(self, ctx, role:int=None):
         guild = ctx.guild
         if not role:
-            return await ctx.send(":robot: **Please enter the role ID!**")
+            return await ctx.send("Please enter the role ID!")
         role = discord.utils.get(guild.roles, id=role)
         if not role:
-            return await ctx.send(":robot: **I can't seem to find that role!**")
+            return await ctx.send("I can't seem to find that role!")
         if guild.default_role.id == role.id:
-            return await ctx.send(":robot: **The [at]everyone role cannot be a moderator role!**")
+            return await ctx.send("The [at]everyone role cannot be a moderator role!")
         guild = await self.bot.modlog.get_guild(guild)
         roles = await guild.settings.get("mod_roles", [])
         role = role.id
         if role in roles:
-            return await ctx.send(":robot: **That role is already a moderator role!**")
+            return await ctx.send("That role is already a moderator role!")
         roles.append(role)
         await guild.update_setting("mod_roles", roles)
-        return await ctx.send(":robot: **Added the role to the moderators list!**")
+        return await ctx.send("Added the role to the moderators list!")
 
     @mods.command()
     @is_server_admin()
@@ -79,7 +115,7 @@ class SettingsModule:
         guild = await self.bot.modlog.get_guild(ctx.guild)
         roles = await guild.settings.get("mod_roles", [])
         if len(roles) < 1:
-            return await ctx.send(":robot: **There are no moderator roles!**")
+            return await ctx.send("There are no moderator roles!")
         actualRoles = []
         for role in roles:
             role = discord.utils.get(guild.guild.roles, id=role)
@@ -100,29 +136,29 @@ class SettingsModule:
     async def removerole(self, ctx, role:int=None):
         guild = ctx.guild
         if not role:
-            return await ctx.send(":robot: **Please enter the role ID!**")
+            return await ctx.send("Please enter the role ID!")
         guild = await self.bot.modlog.get_guild(guild)
         roles = await guild.settings.get("mod_roles", [])
         role = role.id
         if not role in roles:
-            return await ctx.send(":robot: **That role is not moderator role!**")
+            return await ctx.send("That role is not moderator role!")
         roles.remove(role)
         await guild.update_setting("mod_roles", roles)
-        return await ctx.send(":robot: **Removed the role from the moderators list!**")
+        return await ctx.send("Removed the role from the moderators list!")
 
     @mods.command()
     @is_server_admin()
     async def adduser(self, ctx, user:discord.Member=None):
         guild = ctx.guild
         if not user:
-            return await ctx.send(":robot: **Please mention the user!**")
+            return await ctx.send("Please mention the user!")
         guild = await self.bot.modlog.get_guild(guild)
         users = await guild.settings.get("mod_users", [])
         if user.id in users:
-            return await ctx.send(":robot: **That user is already a moderator!**")
+            return await ctx.send("That user is already a moderator!")
         users.append(user.id)
         await guild.update_setting("mod_users", users)
-        return await ctx.send(":robot: **Added the user to the moderators list!**")
+        return await ctx.send("Added the user to the moderators list!")
 
     @mods.command()
     @is_server_admin()
@@ -130,7 +166,7 @@ class SettingsModule:
         guild = await self.bot.modlog.get_guild(ctx.guild)
         users = await guild.settings.get("mod_users", [])
         if len(users) < 1:
-            return await ctx.send(":robot: **There are no moderator users!**")
+            return await ctx.send("There are no moderator users!")
         actualUsers = []
         for user in users:
             user = guild.guild.get_member(user)
@@ -151,14 +187,14 @@ class SettingsModule:
     async def removeuser(self, ctx, user:discord.Member=None):
         guild = ctx.guild
         if not user:
-            return await ctx.send(":robot: **Please mention the user!**")
+            return await ctx.send("Please mention the user!")
         guild = await self.bot.modlog.get_guild(guild)
         users = await guild.settings.get("mod_users", [])
         if not user.id in users:
-            return await ctx.send(":robot: **That user is not moderator!**")
+            return await ctx.send("That user is not moderator!")
         users.remove(user.id)
         await guild.update_setting("mod_users", users)
-        return await ctx.send(":robot: **Removed the user from the moderators list!**")
+        return await ctx.send("Removed the user from the moderators list!")
 
 def setup(bot):
     bot.add_cog(SettingsModule(bot))

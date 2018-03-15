@@ -6,11 +6,17 @@ from thehammer.context import CustomContext
 import motor.motor_asyncio
 from thehammer.modlog import ModLog
 
+async def get_prefix(bot, message):
+    if not message.guild:
+        return commands.when_mentioned_or(bot.config.prefix)
+    guild = await bot.modlog.get_guild(message.guild)
+    return commands.when_mentioned_or(await guild.settings.get("command_prefix", bot.config.prefix))(bot, message)
+
 class Bot(commands.AutoShardedBot):
     def __init__(self, config_file, logger):
         self.config = config_from_file(config_file)
         self.logger = logger
-        super(Bot, self).__init__(command_prefix=self.config.prefix)
+        super(Bot, self).__init__(command_prefix=get_prefix)
         self.init_databases()
         self.modlog = ModLog(self)
 

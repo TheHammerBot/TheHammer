@@ -96,7 +96,7 @@ class AdminModule:
 
         result = self.sanitize_output(ctx, str(result))
 
-        await ctx.send("```py\n{}```".format(result))
+        await ctx.channel.send("```py\n{}```".format(result))
 
 def setup(bot):
     bot.add_cog(AdminModule(bot))
