@@ -62,15 +62,6 @@ class ModGuild:
         self.id = guild.id
         self.settings = GuildSettings(bot, self)
 
-    async def generate_global_id(self):
-        casecount_doc = await self.bot.db.metadata.find_one({'_id': "global_id"})
-        if not casecount_doc:
-            await self.bot.db.metadata.insert_one({"_id": "global_id", "value": 0})
-            return await self.generate_global_id()
-        casecount = casecount_doc['value'] + 1
-        await self.bot.db.metadata.replace_one({'_id': "global_id"},{'value': casecount})
-        return casecount
-
     async def generate_id(self):
         casecount = await self.settings.get("latest_case", 0)
         casecount = casecount + 1
@@ -129,7 +120,7 @@ class ModGuild:
         if hasattr(moderator, "id"):
             moderator = moderator.id
         message = await modlog_channel.send(embed=await self.generate_embed(_id, _type, moderator, user.id, reason, timestamp))
-        data = {"_id": await self.generate_global_id(), "case_id":_id, "guild_id": self.id, "type": _type, "moderator":moderator, "user":user.id, "reason":reason, "message":message.id, "timestamp":timestamp}
+        data = {"case_id":_id, "guild_id": self.id, "type": _type, "moderator":moderator, "user":user.id, "reason":reason, "message":message.id, "timestamp":timestamp}
         await self.bot.db.cases.insert_one(data)
         self.bot.logger.info("Created case id {} guild_id {}".format(_id, self.id))
         return Case(self.bot, self, data)
