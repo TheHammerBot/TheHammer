@@ -1,5 +1,7 @@
 from discord.ext import commands
 import discord
+
+from thehammer.context import CustomContext
 from thehammer.decorators import is_server_mod
 import datetime
 
@@ -42,6 +44,27 @@ class ModModule:
             return await ctx.send("Banned user <@{}> for {}!".format(user.id, reason))
         else:
             return await ctx.send("Hey, I'm sorry, but that user is higher in the hierarchy than you are, I can't let you do that...")
+
+    @commands.command()
+    @is_server_mod()
+    async def hackban(self, ctx, _id: int, *, reason: str=None):
+        is_special = ctx.author == ctx.guild.owner
+        bot = self.bot
+        user = ctx.guild.get_member(_id)
+        if user is not None:
+            return await ctx.invoke(self.ban, user=user)
+        try:
+            guild = await self.bot.modlog.get_guild(ctx.guild)
+            user = await bot.get_user_info(_id)
+            await bot.http.ban(_id, guild.id, 0)
+            _type = "Hackban"
+            moderator = ctx.author
+            await guild.new_case(_type, user, moderator, reason)
+            await ctx.send("Hackbanned user with the id {} for {}!".format(_id, reason))
+        except discord.NotFound:
+            await ctx.send("I'm sorry, this ID is invalid. Can't really ban a person that doesn't exist, right?")
+        except discord.Forbidden:
+            await ctx.send("I'm sorry, I can't ban this user, not enough permissions?")
 
     @commands.command()
     @is_server_mod()

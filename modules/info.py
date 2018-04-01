@@ -3,6 +3,7 @@ import discord
 import platform
 from thehammer.decorators import is_server_admin
 import datetime
+import time
 
 class InfoModule:
     def __init__(self, bot):
@@ -58,6 +59,9 @@ class InfoModule:
     async def about(self, ctx):
         """Get more information about the bot"""
         bot = self.bot
+        time1 = time.perf_counter()
+        await ctx.send("Give me a sec....")
+        time2 = time.perf_counter()
         if not hasattr(bot, "owner"):
             return await ctx.send("Hey, I'm sorry, but I am not ready yet, please try again in a few seconds.") # You won't often have to see this, this is only when the bot hasn't yet started up
         embed = discord.Embed(color=discord.Colour.green(), timestamp=datetime.datetime.utcnow())
@@ -66,7 +70,7 @@ class InfoModule:
         embed.add_field(name="Discord.py Version", value=discord_version, inline=True)
         embed.add_field(name="Python Version", value=python_version, inline=True)
         embed.add_field(name="Author", value=bot.owner.owner, inline=True)
-        embed.add_field(name="Latency", value=str(round(bot.latency, 3)), inline=True)
+        embed.add_field(name="Latency", value="{}ms".format(round((time2-time1)*1000)), inline=True)
         embed.add_field(name="Guilds", value=str(len(bot.guilds)), inline=True)
         embed.add_field(name="Users", value=str(len(bot.users)), inline=True)
         if ctx.message.guild:
