@@ -62,7 +62,7 @@ class InfoModule:
         msg = await ctx.send("Give me a sec....")
         time2 = datetime.datetime.utcnow()
         if not hasattr(bot, "owner"):
-            await msg.edit(content="Hey, I'm sorry, but I am not ready yet, please try again in a few seconds.") # You won't often have to see this, this is only when the bot hasn't yet started up
+            await msg.edit(content=":robot: **Hey, I'm sorry, but I am not ready yet, please try again in a few seconds.**") # You won't often have to see this, this is only when the bot hasn't yet started up
             return
         embed = discord.Embed(color=discord.Colour.green(), timestamp=datetime.datetime.utcnow())
         discord_version = discord.__version__
