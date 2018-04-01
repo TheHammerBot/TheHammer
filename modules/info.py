@@ -70,7 +70,7 @@ class InfoModule:
         embed.add_field(name="Discord.py Version", value=discord_version, inline=True)
         embed.add_field(name="Python Version", value=python_version, inline=True)
         embed.add_field(name="Author", value=bot.owner.owner, inline=True)
-        embed.add_field(name="Latency", value="{}ms".format(round((time2-time1).milliseconds*1000)), inline=True)
+        embed.add_field(name="Latency", value="{}ms".format(round((time2-time1).total_seconds()*1000)), inline=True)
         embed.add_field(name="Guilds", value=str(len(bot.guilds)), inline=True)
         embed.add_field(name="Users", value=str(len(bot.users)), inline=True)
         if ctx.message.guild:
