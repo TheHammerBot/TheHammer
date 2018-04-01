@@ -60,7 +60,7 @@ class InfoModule:
         """Get more information about the bot"""
         bot = self.bot
         time1 = time.perf_counter()
-        await ctx.send("Give me a sec....")
+        msg = await ctx.send("Give me a sec....")
         time2 = time.perf_counter()
         if not hasattr(bot, "owner"):
             return await ctx.send("Hey, I'm sorry, but I am not ready yet, please try again in a few seconds.") # You won't often have to see this, this is only when the bot hasn't yet started up
@@ -78,7 +78,7 @@ class InfoModule:
         embed.add_field(name="Links", value="**[Guild Invite](https://discord.gg/pfvZCpu)\n[Bot Invite](https://discordapp.com/oauth2/authorize?client_id={}&permissions=8&scope=bot)\n[GitHub](https://github.com/JustMaffie/TheHammer)**".format(self.bot.user.id))
         embed.add_field(name="Developers", value="{}, CircuitRCAY#3038".format(bot.owner.owner))
         embed.set_footer(text='Requested by: {}'.format(ctx.author), icon_url=ctx.author.avatar_url)
-        return await ctx.send(embed=embed)
+        await msg.edit(content=None, embed=embed)
 
 
 def setup(bot):
