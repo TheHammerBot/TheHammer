@@ -62,14 +62,15 @@ class InfoModule:
         msg = await ctx.send("Give me a sec....")
         time2 = datetime.datetime.utcnow()
         if not hasattr(bot, "owner"):
-            return await ctx.send("Hey, I'm sorry, but I am not ready yet, please try again in a few seconds.") # You won't often have to see this, this is only when the bot hasn't yet started up
+            await msg.edit("Hey, I'm sorry, but I am not ready yet, please try again in a few seconds.") # You won't often have to see this, this is only when the bot hasn't yet started up
+            return
         embed = discord.Embed(color=discord.Colour.green(), timestamp=datetime.datetime.utcnow())
         discord_version = discord.__version__
         python_version = platform.python_version()
         embed.add_field(name="Discord.py Version", value=discord_version, inline=True)
         embed.add_field(name="Python Version", value=python_version, inline=True)
         embed.add_field(name="Author", value=bot.owner.owner, inline=True)
-        embed.add_field(name="Latency", value="{}ms".format(round((time2-time1)*1000)), inline=True)
+        embed.add_field(name="Latency", value="{}ms".format(round((time2-time1).milliseconds*1000)), inline=True)
         embed.add_field(name="Guilds", value=str(len(bot.guilds)), inline=True)
         embed.add_field(name="Users", value=str(len(bot.users)), inline=True)
         if ctx.message.guild:
