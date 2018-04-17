@@ -15,7 +15,7 @@ Developer           | CircuitRCAY#3038([@CodeFromCirc](https://github.com/CodeFr
 1. `sudo sh ./run.sh`
 
 ### Production
-In case you run a production instance of this bot on `Linux`, you are recommended to install `UVLoop` and `Pillow-SIMD`, this will severely speed up your bot.
+In case you run a production instance of this bot on `Linux`, you are recommended to install `UVLoop`, this will severely speed up your bot.
 
 ## Licence
 
