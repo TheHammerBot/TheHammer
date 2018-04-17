@@ -1,2 +1,3 @@
 https://github.com/rapptz/discord.py/archive/rewrite.zip
 motor
+pillow

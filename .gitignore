@@ -23,5 +23,5 @@ ENV/
 
 # custom
 config.json
-main.log
+*.log
 .idea/

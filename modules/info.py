@@ -1,3 +1,21 @@
+"""
+    The Hammer
+    Copyright (C) 2018 JustMaffie
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published
+    by the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program. If not, see <http://www.gnu.org/licenses/>.
+"""
+
 from discord.ext import commands
 import discord
 import platform
@@ -75,7 +93,11 @@ class InfoModule:
         embed.add_field(name="Users", value=str(len(bot.users)), inline=True)
         if ctx.message.guild:
             embed.add_field(name="Shard ID", value=str(ctx.message.guild.shard_id), inline=True)
-        embed.add_field(name="Links", value="**[Guild Invite](https://discord.gg/pfvZCpu)\n[Bot Invite](https://discordapp.com/oauth2/authorize?client_id={}&permissions=8&scope=bot)\n[GitHub](https://github.com/JustMaffie/TheHammer)**".format(self.bot.user.id))
+        links = "**"
+        for name, link in self.bot.config.links._dict.items():
+            links += "[{}]({})\n".format(name, link)
+        links += "**"
+        embed.add_field(name="Links", value=links)
         embed.add_field(name="Developers", value="{}, CircuitRCAY#3038".format(bot.owner.owner))
         embed.set_footer(text='Requested by: {}'.format(ctx.author), icon_url=ctx.author.avatar_url)
         await msg.edit(content=None, embed=embed)
