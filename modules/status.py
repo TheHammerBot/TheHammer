@@ -48,10 +48,11 @@ class Status(Module):
         indicator = data['status']['indicator']
         embed = discord.Embed(color=INDICATOR_COLORS.get(indicator, discord.Colour.blue()), timestamp=datetime.datetime.utcnow())
         embed.set_author(name=str(ctx.author), icon_url=ctx.author.avatar_url)
-        embed.add_field(name="API", value=self.get_value(data['components'], "API")['status'].title())
-        embed.add_field(name="Gateway", value=self.get_value(data['components'], "Gateway")['status'].title())
-        embed.add_field(name="Media Proxy", value=self.get_value(data['components'], "Media Proxy")['status'].title())
-        embed.add_field(name="Voice", value=self.get_value(data['components'], "Voice")['status'].title())
+        embed.add_field(name="API", value=self.get_value(data['components'], "API")['status'].title(), inline=False)
+        embed.add_field(name="Gateway", value=self.get_value(data['components'], "Gateway")['status'].title(), inline=False)
+        embed.add_field(name="Media Proxy", value=self.get_value(data['components'], "Media Proxy")['status'].title(), inline=False)
+        embed.add_field(name="CloudFlare", value=self.get_value(data['components'], "CloudFlare")['status'].title(), inline=False)
+        embed.add_field(name="Voice", value=self.get_value(data['components'], "Voice")['status'].title(), inline=False)
         embed.set_footer(text=data['status']['description'])
         return await ctx.send(embed=embed)
 
