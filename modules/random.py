@@ -87,5 +87,13 @@ class RandomModule:
         file = discord.File(img, "duck.png")
         return await ctx.send(file=file)
 
+    @commands.command()
+    async def coffee(self, ctx):
+        await ctx.trigger_typing()
+        coffee = await self.get("https://coffee.alexflipnote.xyz/random.json")
+        img = await self.get_file(coffee['file'])
+        file = discord.File(img, "coffee.{}".format(os.path.splitext(coffee['file'])[1]))
+        return await ctx.send(file=file)
+
 def setup(bot):
     bot.add_cog(RandomModule(bot))
