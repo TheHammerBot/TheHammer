@@ -59,7 +59,7 @@ class Events:
             self.bot.sentry.captureException()
 
     async def on_guild_remove(self, guild):
-        servers = len(self.bot.client.guilds)
+        servers = len(self.bot.guilds)
         try:
             statsd.gauge('thehammer.guilds.total', servers)
             statsd.decrement('thehammer.guilds.joins',
