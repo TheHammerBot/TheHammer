@@ -38,8 +38,8 @@ class EventsModule:
     async def on_message(self, message):
         try:
             if message.guild:
-                tags = ["guild:{message.guild.id}",
-                        "shard:{message.guild.shard_id}"]
+                tags = ["guild:{}".format(message.guild.id),
+                        "shard:{}".format(message.guild.shard_id)]
             else:
                 tags = []
             statsd.increment(
@@ -54,7 +54,7 @@ class EventsModule:
         try:
             statsd.gauge('thehammer.guilds.total', servers)
             statsd.increment('thehammer.guilds.joins',
-                             tags=["guild:{guild.id}"])
+                             tags=["guild:{}".format(guild.id)])
         except BaseException as e:
             self.bot.sentry.captureException()
 
@@ -63,7 +63,7 @@ class EventsModule:
         try:
             statsd.gauge('thehammer.guilds.total', servers)
             statsd.decrement('thehammer.guilds.joins',
-                             tags=["guild:{guild.id}"])
+                             tags=["guild:{}".format(guild.id)])
         except BaseException as e:
             self.bot.sentry.captureException()
 
