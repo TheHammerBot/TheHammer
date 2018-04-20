@@ -21,6 +21,7 @@ import discord
 import aiohttp
 import uuid
 import os
+import datetime
 
 class Random:
     def __init__(self, bot):
@@ -37,13 +38,6 @@ class Random:
         content = await resp.json()
         resp.close()
         return content
-
-    async def get_file(self, file_url):
-        session = await self.get_session()
-        resp = await session.get(file_url)
-        data = await resp.read()
-        resp.close()
-        return data
 
     @commands.command()
     async def password(self, ctx):
@@ -67,33 +61,38 @@ class Random:
     async def dog(self, ctx):
         await ctx.trigger_typing()
         dog = await self.get("https://dog.ceo/api/breeds/image/random")
-        img = await self.get_file(dog['message'])
-        file = discord.File(img, "dog.png")
-        return await ctx.send(file=file)
+        embed = discord.Embed(color=discord.Colour.blue(), timestamp=datetime.datetime.utcnow())
+        embed.set_author(name=ctx.author, icon_url=ctx.author.avatar_url)
+        embed.set_image(url=dog['message'])
+        return await ctx.send(embed=embed)
 
     @commands.command()
     async def cat(self, ctx):
         await ctx.trigger_typing()
         cat = await self.get("https://aws.random.cat/meow")
-        img = await self.get_file(cat['file'])
-        file = discord.File(img, "cat.{}".format(os.path.splitext(cat['file'])[1]))
-        return await ctx.send(file=file)
+        embed = discord.Embed(color=discord.Colour.blue(), timestamp=datetime.datetime.utcnow())
+        embed.set_author(name=ctx.author, icon_url=ctx.author.avatar_url)
+        embed.set_image(url=cat['file'])
+        return await ctx.send(embed=embed)
 
     @commands.command()
     async def duck(self, ctx):
         await ctx.trigger_typing()
         duck = await self.get("https://random-d.uk/api/v1/random?type=jpg")
-        img = await self.get_file(duck['url'])
-        file = discord.File(img, "duck.png")
-        return await ctx.send(file=file)
+        embed = discord.Embed(color=discord.Colour.blue(), timestamp=datetime.datetime.utcnow())
+        embed.set_author(name=ctx.author, icon_url=ctx.author.avatar_url)
+        embed.set_image(url=duck['url'])
+        embed.set_footer(text=duck['message'])
+        return await ctx.send(embed=embed)
 
     @commands.command()
     async def coffee(self, ctx):
         await ctx.trigger_typing()
         coffee = await self.get("https://coffee.alexflipnote.xyz/random.json")
-        img = await self.get_file(coffee['file'])
-        file = discord.File(img, "coffee.{}".format(os.path.splitext(coffee['file'])[1]))
-        return await ctx.send(file=file)
+        embed = discord.Embed(color=discord.Colour.blue(), timestamp=datetime.datetime.utcnow())
+        embed.set_author(name=ctx.author, icon_url=ctx.author.avatar_url)
+        embed.set_image(url=coffee['file'])
+        return await ctx.send(embed=embed)
 
     @commands.command()
     async def joke(self, ctx):
