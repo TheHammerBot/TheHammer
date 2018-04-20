@@ -21,7 +21,7 @@ import discord
 import asyncio
 from thehammer.decorators import is_owner
 
-class AdminModule:
+class Admin:
     def __init__(self, bot):
         self.bot = bot
         
@@ -117,4 +117,4 @@ class AdminModule:
         await ctx.channel.send("```py\n{}```".format(result))
 
 def setup(bot):
-    bot.add_cog(AdminModule(bot))
+    bot.load_module(Admin)

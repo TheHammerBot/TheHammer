@@ -22,7 +22,7 @@ import aiohttp
 import uuid
 import os
 
-class RandomModule:
+class Random:
     def __init__(self, bot):
         self.bot = bot
 
@@ -96,4 +96,4 @@ class RandomModule:
         return await ctx.send(file=file)
 
 def setup(bot):
-    bot.add_cog(RandomModule(bot))
+    bot.load_module(Random)

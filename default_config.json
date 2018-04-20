@@ -12,5 +12,7 @@
         "Guild Invite": "https://discord.gg/pfvZCpu",
         "GitHub": "https://github.com/TheHammerBot/TheHammer"
     },
-    "sentry_dsn": null
+    "sentry_dsn": null,
+    "shard_count": null,
+    "fortnite_api_key": null
 }

@@ -29,7 +29,7 @@ import logging
 
 async def get_prefix(bot, message):
     if not message.guild:
-        return commands.when_mentioned_or(bot.config.prefix)
+        return commands.when_mentioned_or(bot.config.prefix)(bot, message)
     guild = await bot.modlog.get_guild(message.guild)
     return commands.when_mentioned_or(await guild.settings.get("command_prefix", bot.config.prefix))(bot, message)
 
@@ -37,7 +37,7 @@ class Bot(commands.AutoShardedBot):
     def __init__(self, config_file, logger):
         self.config = config_from_file(config_file)
         self.logger = logger
-        super(Bot, self).__init__(command_prefix=get_prefix)
+        super(Bot, self).__init__(command_prefix=get_prefix, shard_count=self.config.shard_count)
         self.init_databases()
         self.modlog = ModLog(self)
         if self.config.sentry_dsn != None:
@@ -58,6 +58,9 @@ class Bot(commands.AutoShardedBot):
 
     def init_databases(self):
         self.init_mongo()
+
+    def load_module(self, module):
+        self.add_cog(module(self))
 
     def load_extension(self, name):
         self.logger.info('LOADING EXTENSION {name}'.format(name=name))

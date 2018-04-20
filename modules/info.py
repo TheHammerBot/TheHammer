@@ -22,7 +22,7 @@ import platform
 from thehammer.decorators import is_server_admin
 import datetime
 
-class InfoModule:
+class Info:
     def __init__(self, bot):
         self.bot = bot
 
@@ -90,6 +90,7 @@ class InfoModule:
         embed.add_field(name="Author", value=bot.owner.owner, inline=True)
         embed.add_field(name="Latency", value="{}ms".format(round((time2-time1).total_seconds()*1000)), inline=True)
         embed.add_field(name="Guilds", value=str(len(bot.guilds)), inline=True)
+        embed.add_field(name="Shards", value=str(len(bot.shards)), inline=True)
         embed.add_field(name="Users", value=str(len(bot.users)), inline=True)
         if ctx.message.guild:
             embed.add_field(name="Shard ID", value=str(ctx.message.guild.shard_id), inline=True)
@@ -104,4 +105,4 @@ class InfoModule:
 
 
 def setup(bot):
-    bot.add_cog(InfoModule(bot))
+    bot.load_module(Info)

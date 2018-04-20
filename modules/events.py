@@ -20,7 +20,7 @@ from discord.ext import commands
 import discord
 from datadog import statsd
 
-class EventsModule:
+class Events:
     def __init__(self, bot):
         self.bot = bot
 
@@ -94,4 +94,4 @@ class EventsModule:
             self.bot.logger.exception(error)
 
 def setup(bot):
-    bot.add_cog(EventsModule(bot))
+    bot.load_module(Events)

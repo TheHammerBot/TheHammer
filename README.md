@@ -1,5 +1,5 @@
 # The Hammer
-An open source general purpose Discord Bot
+An open source general purpose [Discord](https://discordapp.com/) Bot
 
 ## Development Team
 Category            | People
@@ -13,6 +13,9 @@ Developer           | CircuitRCAY#3038([@CodeFromCirc](https://github.com/CodeFr
 1. Edit `config.json`
 1. `sudo python3.6 -m pip install -r requirements.txt`
 1. `sudo sh ./run.sh`
+
+## Fortnite Command
+To be able to use the Fortnite command you must set the `fortnite_api_key` setting in the `config.json`, you can create one at [fortnitetracker.com/site-api](https://fortnitetracker.com/site-api)
 
 ### Production
 In case you run a production instance of this bot on `Linux`, you are recommended to install `UVLoop`, this will severely speed up your bot.

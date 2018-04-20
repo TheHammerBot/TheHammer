@@ -21,7 +21,7 @@ import discord
 import discord
 from thehammer.decorators import is_server_admin
 
-class SettingsModule:
+class Settings:
     def __init__(self, bot):
         self.bot = bot
 
@@ -215,4 +215,4 @@ class SettingsModule:
         return await ctx.send("Removed the user from the moderators list!")
 
 def setup(bot):
-    bot.add_cog(SettingsModule(bot))
+    bot.load_module(Settings)

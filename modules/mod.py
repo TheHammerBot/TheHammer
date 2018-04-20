@@ -23,7 +23,7 @@ from thehammer.context import CustomContext
 from thehammer.decorators import is_server_mod
 import datetime
 
-class ModModule:
+class Mod:
     def __init__(self, bot):
         self.bot = bot
         self.ban_queue = []
@@ -174,4 +174,4 @@ class ModModule:
         return await ctx.send("Reason Updated!")
 
 def setup(bot):
-    bot.add_cog(ModModule(bot))
+    bot.load_module(Mod)
