@@ -19,11 +19,9 @@
 from discord.ext import commands
 import discord
 from datadog import statsd
+from thehammer.module import Module
 
-class Events:
-    def __init__(self, bot):
-        self.bot = bot
-
+class Events(Module):
     async def on_ready(self):
         bot = self.bot
         game = discord.Game(name="with moderators")

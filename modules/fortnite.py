@@ -21,8 +21,9 @@ import discord
 import aiohttp
 from thehammer.utils import TimerResetDict
 import datetime
+from thehammer.module import Module
 
-class Fortnite:
+class Fortnite(Module):
     def __init__(self, bot):
         self.bot = bot
         self.cache = TimerResetDict(10*60)

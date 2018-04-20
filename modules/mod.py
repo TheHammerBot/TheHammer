@@ -22,8 +22,9 @@ import discord
 from thehammer.context import CustomContext
 from thehammer.decorators import is_server_mod
 import datetime
+from thehammer.module import Module
 
-class Mod:
+class Mod(Module):
     def __init__(self, bot):
         self.bot = bot
         self.ban_queue = []

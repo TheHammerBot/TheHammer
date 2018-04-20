@@ -21,11 +21,9 @@ import discord
 import platform
 from thehammer.decorators import is_server_admin
 import datetime
+from thehammer.module import Module
 
-class Info:
-    def __init__(self, bot):
-        self.bot = bot
-
+class Info(Module):
     @commands.command()
     async def userinfo(self, ctx, user:discord.User=None):
         """Grab information about a user"""

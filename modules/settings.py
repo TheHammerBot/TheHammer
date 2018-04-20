@@ -20,11 +20,9 @@ from discord.ext import commands
 import discord
 import discord
 from thehammer.decorators import is_server_admin
+from thehammer.module import Module
 
-class Settings:
-    def __init__(self, bot):
-        self.bot = bot
-
+class Settings(Module):
     @commands.group()
     @is_server_admin()
     async def settings(self, ctx):

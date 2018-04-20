@@ -22,11 +22,9 @@ import aiohttp
 import uuid
 import os
 import datetime
+from thehammer.module import Module
 
-class Random:
-    def __init__(self, bot):
-        self.bot = bot
-
+class Random(Module):
     async def get_session(self):
         if not hasattr(self, "session"):
             self.session = aiohttp.ClientSession()
