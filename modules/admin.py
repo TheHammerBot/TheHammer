@@ -19,7 +19,7 @@
 from discord.ext import commands
 import discord
 import asyncio
-from thehammer.decorators import is_ownerfrom
+from thehammer.decorators import is_owner
 from thehammer.module import Module
 
 class Admin(Module):
@@ -27,7 +27,9 @@ class Admin(Module):
     @commands.command()
     async def reload(self, ctx, module):
         try:
-            self.bot.unload_extension(module)
+            result = self.bot.unload_extension(module)
+            if result == False:
+                return await ctx.send("Module {module} does not exist!".format(module=module))
             self.bot.load_extension(module)
         except Exception as e:
             await ctx.send("An error occurred while reloading {module}\n``{e}``".format(module=module,e=e))
@@ -38,7 +40,9 @@ class Admin(Module):
     @commands.command()
     async def load(self, ctx, module):
         try:
-            self.bot.load_extension(module)
+            result = self.bot.load_extension(module)
+            if result == False:
+                return await ctx.send("Module {module} does not exist!".format(module=module))
         except Exception as e:
             return await ctx.send("An error occurred while loading {module}\n{e}".format(module=module,e=e))
         return await ctx.send("Module {module} loaded successfully".format(module=module))
@@ -47,7 +51,9 @@ class Admin(Module):
     @commands.command()
     async def unload(self, ctx, module):
         try:
-            self.bot.unload_extension(module)
+            result = self.bot.unload_extension(module)
+            if result == False:
+                return await ctx.send("Module {module} does not exist!".format(module=module))
         except Exception as e:
             return await ctx.send("An error occurred while loading {module}\n{e}".format(module=module,e=e))
         return await ctx.send("Module {module} loaded successfully".format(module=module))

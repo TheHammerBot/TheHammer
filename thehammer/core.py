@@ -69,6 +69,8 @@ class Bot(commands.AutoShardedBot):
             name = "modules.{}".format(name)
         try:
             super().load_extension(name)
+        except ModuleNotFoundError:
+            return False
         except Exception as e:
             self.logger.exception(e)
 
@@ -78,6 +80,8 @@ class Bot(commands.AutoShardedBot):
             name = "modules.{}".format(name)
         try:
             super().unload_extension(name)
+        except ModuleNotFoundError:
+            return False
         except Exception as e:
             self.logger.exception(e)
 
