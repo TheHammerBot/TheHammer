@@ -77,7 +77,7 @@ class Events:
         elif isinstance(error, commands.CommandInvokeError):
             self.bot.logger.exception("An error occurred in the command '{}'"
                           "".format(ctx.command.qualified_name), exc_info=error.original)
-            message = ("An error occurred in the command ``{}``. Please contact the bot admins ASAP."
+            message = ("An error occurred in the command ``{}``. The bot administrators have been notified."
                        "".format(ctx.command.qualified_name))
             await ctx.send(message)
         elif isinstance(error, commands.CommandNotFound):
