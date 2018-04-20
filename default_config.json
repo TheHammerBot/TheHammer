@@ -11,5 +11,6 @@
         "Bot Invite": "https://discordapp.com/oauth2/authorize?client_id=414015589183651840&permissions=8&scope=bot",
         "Guild Invite": "https://discord.gg/pfvZCpu",
         "GitHub": "https://github.com/TheHammerBot/TheHammer"
-    }
+    },
+    "sentry_dsn": null
 }

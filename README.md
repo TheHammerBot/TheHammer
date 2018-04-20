@@ -36,3 +36,6 @@ In case you run a production instance of this bot on `Linux`, you are recommende
     You should have received a copy of the GNU Affero General Public License
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 ```
+
+### Info.json
+The `info.json` file is for information about the bot, this should only be changed by project maintainers.

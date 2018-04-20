@@ -1,6 +1,7 @@
 # Setup logging
 import logging.handlers
 import sys
+import discord
 
 FORMAT = '[%(levelname)s] [%(name)s] [%(asctime)s]: %(message)s'
 logger = logging.getLogger("TheHammer")
@@ -36,3 +37,7 @@ try:
     bot.run_bot()
 except KeyboardInterrupt:
     bot.shutdown()
+except discord.errors.LoginFailure:
+    pass
+except Exception as e:
+    bot.sentry.captureException()

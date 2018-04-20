@@ -16,13 +16,16 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 
-import discord
 from discord.ext import commands
 from thehammer.config import config_from_file
 import os
 from thehammer.context import CustomContext
 import motor.motor_asyncio
 from thehammer.modlog import ModLog
+from raven import Client
+from raven.handlers.logging import SentryHandler
+from raven.conf import setup_logging
+import logging
 
 async def get_prefix(bot, message):
     if not message.guild:
@@ -37,6 +40,13 @@ class Bot(commands.AutoShardedBot):
         super(Bot, self).__init__(command_prefix=get_prefix)
         self.init_databases()
         self.modlog = ModLog(self)
+        if self.config.sentry_dsn != None:
+            self.sentry = Client(self.config.sentry_dsn)
+            sentry_handler = SentryHandler(self.sentry)
+            sentry_handler.setLevel(logging.ERROR)
+            setup_logging(sentry_handler)
+        else:
+            self.sentry = None
 
     async def get_context(self, message, *, cls=CustomContext):
         return await super().get_context(message, cls=cls)
@@ -53,13 +63,19 @@ class Bot(commands.AutoShardedBot):
         self.logger.info('LOADING EXTENSION {name}'.format(name=name))
         if not name.startswith("modules."):
             name = "modules.{}".format(name)
-        return super().load_extension(name)
+        try:
+            super().load_extension(name)
+        except Exception as e:
+            self.logger.exception(e)
 
     def unload_extension(self, name):
         self.logger.info('UNLOADING EXTENSION {name}'.format(name=name))
         if not name.startswith("modules."):
             name = "modules.{}".format(name)
-        return super().unload_extension(name)
+        try:
+            super().unload_extension(name)
+        except Exception as e:
+            self.logger.exception(e)
 
     def load_all_extensions(self):
         _modules = [os.path.splitext(x)[0] for x in os.listdir("modules")]

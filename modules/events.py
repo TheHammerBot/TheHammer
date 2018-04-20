@@ -18,6 +18,7 @@
 
 from discord.ext import commands
 import discord
+from datadog import statsd
 
 class EventsModule:
     def __init__(self, bot):
@@ -33,6 +34,38 @@ class EventsModule:
         for f in info:
             self.bot.logger.info(f)
         self.bot.owner = await self.bot.application_info()
+
+    async def on_message(self, message):
+        try:
+            if message.guild:
+                tags = [f"guild:{message.guild.id}",
+                        f"shard:{message.guild.shard_id}"]
+            else:
+                tags = []
+            statsd.increment(
+                'thehammer.messages.count',
+                tags=tags
+            )
+        except BaseException as e:
+            self.bot.sentry.captureException()
+
+    async def on_guild_join(self, guild):
+        servers = len(self.bot.guilds)
+        try:
+            statsd.gauge('thehammer.guilds.total', servers)
+            statsd.increment('thehammer.guilds.joins',
+                             tags=[f"guild:{guild.id}"])
+        except BaseException as e:
+            self.bot.sentry.captureException()
+
+    async def on_guild_remove(self, guild):
+        servers = len(self.bot.client.guilds)
+        try:
+            statsd.gauge('thehammer.guilds.total', servers)
+            statsd.decrement('thehammer.guilds.joins',
+                             tags=[f"guild:{guild.id}"])
+        except BaseException as e:
+            self.bot.sentry.captureException()
 
     async def on_command_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
