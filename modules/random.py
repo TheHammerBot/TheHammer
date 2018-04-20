@@ -55,13 +55,13 @@ class Random:
     async def trbmb(self, ctx):
         await ctx.trigger_typing()
         quote = await self.get("http://api.chew.pro/trbmb")
-        return await ctx.send("``{}``".format(quote[0]))
+        return await ctx.channel.send(quote[0])
 
     @commands.command()
     async def whatdoestrumpthink(self, ctx):
         await ctx.trigger_typing()
         quote = await self.get("https://api.whatdoestrumpthink.com/api/v1/quotes/random")
-        return await ctx.send("``{}``".format(quote['message']))
+        return await ctx.channel.send(quote['message'])
 
     @commands.command()
     async def dog(self, ctx):
@@ -94,6 +94,18 @@ class Random:
         img = await self.get_file(coffee['file'])
         file = discord.File(img, "coffee.{}".format(os.path.splitext(coffee['file'])[1]))
         return await ctx.send(file=file)
+
+    @commands.command()
+    async def joke(self, ctx):
+        await ctx.trigger_typing()
+        joke = await self.get("http://api.icndb.com/jokes/random?firstName=&lastName={}".format(ctx.author.name))
+        return await ctx.channel.send(joke['value']['joke'])
+
+    @commands.command()
+    async def catfact(self, ctx):
+        await ctx.trigger_typing()
+        fact = await self.get("https://catfact.ninja/fact")
+        return await ctx.channel.send(fact['fact'])
 
 def setup(bot):
     bot.load_module(Random)

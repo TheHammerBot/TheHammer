@@ -19,6 +19,15 @@
 import time
 import threading
 
+class UniqueList(list):
+    def __init__(self, list):
+        for item in list:
+            self.append(item)
+
+    def append(self, value):
+        if not value in self:
+            super(UniqueList, self).append(value)
+
 # Made by Jacob Wiltse <https://github.com/Kelwing>
 class TimerResetDict(threading.Thread):
 
