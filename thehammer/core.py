@@ -36,6 +36,7 @@ async def get_prefix(bot, message):
 class Bot(commands.AutoShardedBot):
     def __init__(self, config_file, logger):
         self.config = config_from_file(config_file)
+        self.info = config_from_file("info.json")
         self.logger = logger
         super(Bot, self).__init__(command_prefix=get_prefix, shard_count=self.config.shard_count)
         self.init_databases()

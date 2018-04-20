@@ -92,6 +92,7 @@ class Info:
         embed.add_field(name="Guilds", value=str(len(bot.guilds)), inline=True)
         embed.add_field(name="Shards", value=str(len(bot.shards)), inline=True)
         embed.add_field(name="Users", value=str(len(bot.users)), inline=True)
+        embed.add_field(name="Version", value=bot.info.version, inline=True)
         if ctx.message.guild:
             embed.add_field(name="Shard ID", value=str(ctx.message.guild.shard_id), inline=True)
         links = "**"
