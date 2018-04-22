@@ -50,7 +50,7 @@ class Info(Module):
         embed.set_author(name=author, icon_url=member.avatar_url)
         embed.add_field(name="ID", value="{}".format(user.id), inline=True)
         embed.add_field(name="Username", value="{}".format(username), inline=True)
-        embed.add_field(name="Game", value=member.game, inline=True)
+        embed.add_field(name="Game", value=member.activity.name, inline=True)
         embed.add_field(name="Roles", value=", ".join(roles))
         embed.add_field(name="Status", value=member.status, inline=True)
         embed.add_field(name="Created At", value="{} (Thats over {} days ago)".format(user_created, since_created), inline=True)
