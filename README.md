@@ -24,7 +24,7 @@ In case you run a production instance of this bot on `Linux`, you are recommende
 
 ```
     The Hammer
-    Copyright (C) 2018 JustMaffie
+    Copyright (C) 2018 Jori van Ee (JustMaffie)
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as published
