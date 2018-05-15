@@ -4,8 +4,8 @@ An open source general purpose [Discord](https://discordapp.com/) Bot
 ## Development Team
 Category            | People
 ------------------- | --------------------------
-Lead Developer      | JustMaffie#0001 ([@JustMaffie](https://github.com/JustMaffie))
-Developer           | CircuitRCAY#3038([@CodeFromCirc](https://github.com/CodeFromCirc))
+Lead Developer      | JustMaffie#5001 ([@JustMaffie](https://github.com/JustMaffie))
+Developer           | CircuitRCAY#3038 ([@CircuitCodes](https://github.com/CircuitCodes))
 
 ## Installation
 1. `git clone https://github.com/TheHammerBot/TheHammer && cd TheHammer`
