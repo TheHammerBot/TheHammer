@@ -14,5 +14,8 @@
     },
     "sentry_dsn": null,
     "shard_count": null,
-    "fortnite_api_key": null
+    "fortnite": {
+        "fortnitetracker": null,
+        "fnbr": null
+    }
 }

@@ -1,4 +1,4 @@
-https://github.com/rapptz/discord.py/archive/rewrite.zip
+git+https://github.com/Rapptz/discord.py@rewrite
 motor
 raven
 datadog

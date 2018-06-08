@@ -28,9 +28,7 @@ class UniqueList(list):
         if not value in self:
             super(UniqueList, self).append(value)
 
-# Made by Jacob Wiltse <https://github.com/Kelwing>
 class TimerResetDict(threading.Thread):
-
     pure_dict = dict()
 
     def __setitem__(self, key, item):
@@ -103,9 +101,13 @@ class TimerResetDict(threading.Thread):
         while True:
             time.sleep(self.seconds)
             self.pure_dict = dict()
+            self.bot.logger.info("Resetting TimerResetDict with name: {name}".format(name=self.name))
 
-    def __init__(self, seconds):
+
+    def __init__(self, bot, name, seconds):
         super().__init__()
+        self.bot = bot
+        self.name = name
         self.daemon = True
         self.seconds = seconds
         self.start()

@@ -97,7 +97,8 @@ class Info(Module):
         for name, link in self.bot.config.links._dict.items():
             links += "[{}]({})\n".format(name, link)
         links += "**"
-        embed.add_field(name="Links", value=links)
+        embed.add_field(name="Links", value=links, inline=False)
+        embed.add_field(name="Special Thanks", value="FNBR.co - Providing a Fortnite Cosmetic API")
         embed.add_field(name="Developers", value="{}, CircuitRCAY#3038".format(bot.owner.owner))
         embed.set_footer(text='Requested by: {}'.format(ctx.author), icon_url=ctx.author.avatar_url)
         await msg.edit(content=None, embed=embed)

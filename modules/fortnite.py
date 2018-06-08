@@ -19,26 +19,15 @@
 from discord.ext import commands
 import discord
 import aiohttp
-from thehammer.utils import TimerResetDict
 import datetime
 from thehammer.module import Module
+from thehammer.modules.fortnite import FortniteHTTP
+import random
 
 class Fortnite(Module):
     def __init__(self, bot):
         self.bot = bot
-        self.cache = TimerResetDict(10*60)
-
-    async def get_session(self):
-        if not hasattr(self, "session"):
-            self.session = aiohttp.ClientSession()
-        return self.session
-
-    async def get(self, api_url, headers={}):
-        session = await self.get_session()
-        resp = await session.get(api_url, headers=headers)
-        content = await resp.json()
-        resp.close()
-        return content
+        self.http = FortniteHTTP(bot)
 
     def get_value(self, list, key):
         for entry in list:
@@ -60,19 +49,57 @@ class Fortnite(Module):
         embed.set_footer(text='Requested by: {}'.format(author), icon_url=author.avatar_url)
         return embed
 
-    @commands.command()
-    async def fortnite(self, ctx, platform:str, *, username):
+    @commands.group()
+    async def fortnite(self, ctx):
+        if ctx.invoked_subcommand is None:
+            await ctx.send_help()
+    
+    @fortnite.command()
+    async def shop(self, ctx):
+        shop = await self.http.get_shop()
+        await shop.send(ctx)
+
+    @fortnite.command()
+    async def cosmetic(self, ctx, *, name):
+        cosmetic = await self.http.get_cosmetic(name)
+        await cosmetic.send(ctx)
+
+    @fortnite.command()
+    async def stats(self, ctx, platform:str, *, username):
         if not hasattr(self.bot, "owner"):
-            return await ctx.send(":robot: **Hey, I'm sorry, but I am not ready yet, please try again in a few seconds.**") # You won't often have to see this, this is only when the bot hasn't yet started up
-        platform = platform.lower()
-        if (platform, username) in self.cache:
-            result = self.cache[(platform, username)] # Data is still in cache, no need to make a GET request
+            return await ctx.send("Hey, I'm sorry, but I am not ready yet, please try again in a few seconds.") # You won't often have to see this, this is only when the bot hasn't yet started up
+        stats = await self.http.get_stats(username, platform)
+        if isinstance(stats, str):
+            return await ctx.send("{error}".format(error=stats))
+        return await ctx.send(embed=await self.generate_embed(ctx.author, stats))
+
+    @fortnite.command()
+    async def random(self, ctx, type=None):
+        types = ['backpack', 'glider', 'pickaxe', 'skin', 'loading', 'outfit']
+        if not type:
+            type = random.choice(types)
+        type = type.lower()
+        nice_types = [type.capitalize() for type in types]
+        if not type in types:
+            return await ctx.send("Invalid type, valid types are: `{types}`".format(types="`, `".join(nice_types)))
+        if type == "skin":
+            type = "outfit"
+        cosmetic = await self.http.random_cosmetic(type)
+        await cosmetic.send(ctx)
+
+    @fortnite.command()
+    async def news(self, ctx, *, gamemode):
+        gamemodes = ['br', 'battle royale', 'stw', 'save the world']
+        gamemode = gamemode.lower()
+        nice_gamemodes = ["BR", "Battle Royale", "STW", "Save The World"]
+        if not gamemode in gamemodes:
+            return await ctx.send("Invalid gamemode, valid gamemodes are: `{gamemodes}`".format(gamemodes="`, `".join(nice_gamemodes)))
+        if gamemode == "br" or gamemode == "battle royale":
+            gamemode = "battleroyale"
         else:
-            result = await self.get("https://api.fortnitetracker.com/v1/profile/{platform}/{username}".format(platform=platform, username=username), headers={"TRN-Api-Key": self.bot.config.fortnite_api_key})
-        self.cache[(platform, username)] = result # Put it in the cache
-        if 'error' in result:
-            return await ctx.send("{error}".format(error=result['error']))
-        return await ctx.send(embed=await self.generate_embed(ctx.author, result))
+            gamemode = "savetheworld"
+        news = await self.http.get_news(gamemode)
+        await news.send(ctx)
 
 def setup(bot):
     bot.load_module(Fortnite)

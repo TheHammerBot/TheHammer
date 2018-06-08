@@ -38,6 +38,15 @@ class Admin(Module):
 
     @is_owner()
     @commands.command()
+    async def shutdown(self, ctx):
+        try:
+            await ctx.send("Shutting down...")
+        except:
+            pass
+        await self.bot.logout()
+
+    @is_owner()
+    @commands.command()
     async def load(self, ctx, module):
         try:
             result = self.bot.load_extension(module)
