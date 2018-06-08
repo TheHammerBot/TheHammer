@@ -88,10 +88,12 @@ class Fortnite(Module):
         await cosmetic.send(ctx)
 
     @fortnite.command()
-    async def news(self, ctx, *, gamemode):
+    async def news(self, ctx, *, gamemode=None):
+        nice_gamemodes = ["BR", "Battle Royale", "STW", "Save The World"]
+        if not gamemode:
+            return await ctx.send("Invalid gamemode, valid gamemodes are: `{gamemodes}`".format(gamemodes="`, `".join(nice_gamemodes)))
         gamemodes = ['br', 'battle royale', 'stw', 'save the world']
         gamemode = gamemode.lower()
-        nice_gamemodes = ["BR", "Battle Royale", "STW", "Save The World"]
         if not gamemode in gamemodes:
             return await ctx.send("Invalid gamemode, valid gamemodes are: `{gamemodes}`".format(gamemodes="`, `".join(nice_gamemodes)))
         if gamemode == "br" or gamemode == "battle royale":
