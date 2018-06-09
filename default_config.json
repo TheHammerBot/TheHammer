@@ -17,5 +17,9 @@
     "fortnite": {
         "fortnitetracker": null,
         "fnbr": null
+    },
+    "imgur": {
+        "client_id": null,
+        "client_secret": null
     }
 }

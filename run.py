@@ -2,6 +2,7 @@
 import logging.handlers
 import sys
 import discord
+import os
 
 FORMAT = '[%(levelname)s] [%(name)s] [%(asctime)s]: %(message)s'
 logger = logging.getLogger("TheHammer")
@@ -32,6 +33,8 @@ logger.setLevel(logging.INFO)
 from thehammer import make_bot
 
 bot = make_bot(logger)
+
+os.makedirs("tmp", exist_ok=True)
 
 try:
     bot.run_bot()

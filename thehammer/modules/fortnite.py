@@ -7,6 +7,9 @@ from io import BytesIO
 import PIL.Image
 import PIL.ImageDraw
 import PIL.ImageFont
+import base64
+from imgurpython import ImgurClient
+import os
 
 priceEmotes = {
     "vbucks": "<:vbucks:454715357102604298>",
@@ -31,10 +34,22 @@ class FortniteHTTP:
     def __init__(self, bot):
         self.bot = bot
         self.cache = TimerResetDict(bot, "Fortnite.Caches.StatsCache", 10*60)
+        self.daily_image = TimerResetDict(bot, "Fortnite.Caches.DailyShopCache", 30*60)
+        self.imgur = ImgurClient(self.bot.config.imgur.client_id, self.bot.config.imgur.client_secret)
+
+    async def upload_image(self, path, name="file.png"):
+        result = self.imgur.upload_from_path(path, {"name":name})
+        return result
 
     async def get(self, api_url, headers={}):
         async with aiohttp.ClientSession() as session:
             async with session.get(api_url, headers=headers) as resp:
+                content = await resp.json()
+        return content
+
+    async def post(self, api_url, data={}, headers={}):
+        async with aiohttp.ClientSession() as session:
+            async with session.post(api_url, data=data, headers=headers) as resp:
                 content = await resp.json()
         return content
 
@@ -50,7 +65,7 @@ class FortniteHTTP:
 
     async def get_shop_image(self):
         result = await self.get_shop()
-        return FortniteShopImage(result)
+        return FortniteShopImage(self, result)
 
     async def random_cosmetic(self, type):
         url = "https://fnbr.co/api/random?type={type}".format(type=type)
@@ -124,21 +139,32 @@ class FortniteShop:
         await ctx.send(embed=daily_items)
 
 class FortniteShopImage: # created by @Douile https://github.com/Douile
-    def __init__(self, result):
+    def __init__(self, http, result):
+        self.http = http
         self.daily = result.get('daily',[])
         self.featured = result.get('featured',[])
-        self.date = result.get('date','')
+        self.date = result['date']
         self.rowsize = 4
         self.itemsize = 200
         self.padding = 20
         self.IMAGENAME = 'generatedshopimage.png'
 
     async def send(self, ctx):
+        if "image" in self.http.daily_image:
+            image = self.http.daily_image['image']
+            embed = discord.Embed(timestamp=format_date(self.date), colour=discord.Color.purple())
+            embed.set_author(name="Fortnite Shop")
+            embed.set_image(url=image)
+            return await ctx.send(embed=embed)
         image = await self.generate()
-        temp = BytesIO()
-        image.save(temp, "PNG")
-        temp.seek(0)
-        await ctx.send(file=discord.File(fp=temp, filename=self.IMAGENAME))
+        image.save("tmp/daily.png", "PNG")
+        result = await self.http.upload_image("tmp/daily.png", self.IMAGENAME)
+        os.remove("tmp/daily.png")
+        self.http.daily_image['image'] = result['link']
+        embed = discord.Embed(timestamp=format_date(self.date), colour=discord.Color.purple())
+        embed.set_author(name="Fortnite Shop")
+        embed.set_image(url=result['link'])
+        return await ctx.send(embed=embed)
 
     async def generate(self):
         items = self.featured + self.daily

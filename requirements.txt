@@ -4,3 +4,4 @@ raven
 datadog
 aiohttp
 pillow-simd
+imgurpython

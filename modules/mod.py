@@ -119,6 +119,8 @@ class Mod(Module):
                 if not entry.user.id == guild.guild.me.id:
                     if entry.target.id == user.id:
                         return await guild.new_case("Ban", entry.target, entry.user, entry.reason)
+        except discord.Forbidden:
+            pass
         except Exception as e:
             self.bot.logger.exception("An error occurred", exc_info=e)
 
@@ -135,6 +137,8 @@ class Mod(Module):
                 if not entry.user.id == guild.guild.me.id:
                     if entry.target.id == member.id:
                         return await guild.new_case("Kick", entry.target, entry.user, entry.reason)
+        except discord.Forbidden:
+            pass
         except Exception as e:
             self.bot.logger.exception("An error occurred", exc_info=e)
 

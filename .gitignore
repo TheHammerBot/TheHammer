@@ -25,3 +25,4 @@ ENV/
 config.json
 *.log
 .idea/
+tmp
