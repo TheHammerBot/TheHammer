@@ -2,6 +2,11 @@ import aiohttp
 from thehammer.utils import TimerResetDict
 import discord
 import datetime
+from math import ceil
+from io import BytesIO
+import PIL.Image
+import PIL.ImageDraw
+import PIL.ImageFont
 
 priceEmotes = {
     "vbucks": "<:vbucks:454715357102604298>",
@@ -26,7 +31,7 @@ class FortniteHTTP:
     def __init__(self, bot):
         self.bot = bot
         self.cache = TimerResetDict(bot, "Fortnite.Caches.StatsCache", 10*60)
-    
+
     async def get(self, api_url, headers={}):
         async with aiohttp.ClientSession() as session:
             async with session.get(api_url, headers=headers) as resp:
@@ -37,8 +42,15 @@ class FortniteHTTP:
         headers = {'X-API-Key': self.bot.config.fortnite.fnbr}
         url = "https://fnbr.co/api/shop"
         result = await self.get(url, headers)
-        result = result['data']
+        return result.get('data',{})
+
+    async def get_shop_embed(self):
+        result = await self.get_shop()
         return FortniteShop(result['daily'], result['featured'], result['date'])
+
+    async def get_shop_image(self):
+        result = await self.get_shop()
+        return FortniteShopImage(result)
 
     async def random_cosmetic(self, type):
         url = "https://fnbr.co/api/random?type={type}".format(type=type)
@@ -110,6 +122,58 @@ class FortniteShop:
             daily_items.add_field(name=name, value=value)
         await ctx.send(embed=featured_items)
         await ctx.send(embed=daily_items)
+
+class FortniteShopImage: # created by @Douile https://github.com/Douile
+    def __init__(self, result):
+        self.daily = result.get('daily',[])
+        self.featured = result.get('featured',[])
+        self.date = result.get('date','')
+        self.rowsize = 4
+        self.itemsize = 200
+        self.padding = 20
+        self.IMAGENAME = 'generatedshopimage.png'
+
+    async def send(self, ctx):
+        image = await self.generate()
+        temp = BytesIO()
+        image.save(temp, "PNG")
+        temp.seek(0)
+        await ctx.send(file=discord.File(fp=temp, filename=self.IMAGENAME))
+
+    async def generate(self):
+        items = self.featured + self.daily
+        rows = ceil(len(items) / self.rowsize)
+        width = round(self.padding*(self.rowsize+1)+self.itemsize*self.rowsize)
+        height = round(self.padding*(rows+1)+self.itemsize*rows)
+        background = PIL.Image.new('RGBA',(width,height),(0,0,0,0))
+        row_array = await self.split_rows(items, self.rowsize)
+
+        left = self.padding
+        top = self.padding
+        for row in row_array:
+            for item in row:
+                url = item.get('images',{}).get('gallery')
+                if url:
+                    image = await self.retrieve_image(url,self.itemsize)
+                    background.paste(image,(left,top),image)
+                left += self.itemsize + self.padding
+            top += self.itemsize + self.padding
+            left = self.padding
+        return background
+
+    async def split_rows(self, items,rowsize):
+        rows = []
+        for i in range(0,len(items),rowsize):
+            rows.append(items[i:i+rowsize])
+        return rows
+
+    async def retrieve_image(self, url,size):
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url) as response:
+                bytes = await response.read()
+        image = PIL.Image.open(BytesIO(bytes)).convert('RGBA')
+        return image.resize((size,size))
+
 
 class FortniteCosmetic:
     def __init__(self, id, name, price, priceIcon, priceIconLink, images, rarity, type, readableType):

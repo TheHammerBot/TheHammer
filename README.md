@@ -6,6 +6,7 @@ Category            | People
 ------------------- | --------------------------
 Lead Developer      | JustMaffie#5001 ([@JustMaffie](https://github.com/JustMaffie))
 Developer           | CircuitRCAY#3038 ([@CircuitCodes](https://github.com/CircuitCodes))
+Contributor         | Tom#4405 ([@Douile](https://github.com/Douile))
 
 ## Installation
 1. `git clone https://github.com/TheHammerBot/TheHammer && cd TheHammer`

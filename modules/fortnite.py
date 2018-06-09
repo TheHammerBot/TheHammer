@@ -53,10 +53,13 @@ class Fortnite(Module):
     async def fortnite(self, ctx):
         if ctx.invoked_subcommand is None:
             await ctx.send_help()
-    
+
     @fortnite.command()
-    async def shop(self, ctx):
-        shop = await self.http.get_shop()
+    async def shop(self, ctx, embed=None):
+        if embed:
+            shop = await self.http.get_shop_embed()
+        else:
+            shop = await self.http.get_shop_image()
         await shop.send(ctx)
 
     @fortnite.command()

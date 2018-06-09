@@ -3,3 +3,4 @@ motor
 raven
 datadog
 aiohttp
+pillow-simd
