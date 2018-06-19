@@ -1,3 +1,5 @@
+**THIS PROJECT IS NOW ARCHIVED AND MOVED TO [OUR GITLAB REPOSITORY](https://gitlab.com/TheHammerBot/TheHammer)**
+
 # The Hammer
 An open source general purpose [Discord](https://discordapp.com/) Bot
 
