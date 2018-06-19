@@ -98,8 +98,8 @@ class FortniteHTTP:
         return result
 
     async def get_news(self, gamemode):
-        url = "https://api.justmaffie.nl/fortnite/news/{gamemode}".format(gamemode=gamemode)
-        result = await self.get(url)
+        url = "https://api.justmaffie.nl/api/v1/fortnite/news/{gamemode}".format(gamemode=gamemode)
+        result = await self.get(url, headers={"X-API-Key":self.bot.config.fortnite.justmaffie})
         return FortniteNews(result['messages'], result['date'])
 
 class FortniteNews:

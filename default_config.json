@@ -6,7 +6,7 @@
     "token": "A mystery",
     "prefix": "h>",
     "owners": [197322731115642880],
-    "admins": [197322731115642880, 255114091360681986],
+    "admins": [197322731115642880],
     "links": {
         "Bot Invite": "https://discordapp.com/oauth2/authorize?client_id=414015589183651840&permissions=8&scope=bot",
         "Guild Invite": "https://discord.gg/pfvZCpu",
@@ -16,7 +16,8 @@
     "shard_count": null,
     "fortnite": {
         "fortnitetracker": null,
-        "fnbr": null
+        "fnbr": null,
+        "justmaffie": null
     },
     "imgur": {
         "client_id": null,
